@@ -3,6 +3,7 @@
 import sys
 import os
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -25,14 +26,15 @@ class MplCanvas(FigureCanvasQTAgg):
 class Window(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.ui = uic.loadUi('interfaz.ui',self)
         self.init_window()
         self.showMaximized()
 
     def init_window(self):
         self.ui = uic.loadUi('interfaz.ui',self)
-        self.actionOpen.clicked.connect(self.abrir_archivo)
-        self.ruta= QLabel(self)
+        self.actionOpen.triggered.connect(self.abrir_archivo)
+        #self.ruta= QLabel(self)
+        #self.actionExit.triggered.connect(self.main)
+        
 
     def abrir_archivo(self):
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
@@ -55,9 +57,7 @@ class Window(QMainWindow):
         widget = QtWidgets.QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-
         self.show()
-        
         
 
 def main():
