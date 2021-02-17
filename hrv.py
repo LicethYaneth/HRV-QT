@@ -8,16 +8,14 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-class interfaz(QMainWindow):
-    def __init__(self):
-        super().__init__()
+class Window(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.init_window()
+        self.resize(1024, 768)
+        self.setWindowTitle('HRV Analitic')
 
     def init_window(self):
-        self.setWindowTitle('HRV Analitic')
-        self.setStyleSheet("background-color: #E6E6E6; color: #494949; font: 10pt")
-        
-        #boton de abrir
         self.button = QPushButton('Abrir', self)
         self.button.clicked.connect(self.abrir_archivo)
         self.button.move(150, 260)
@@ -31,6 +29,32 @@ class interfaz(QMainWindow):
         
         #Esto muestra la ventana
         self.showMaximized()
+
+        #barra de menús
+        self.actionAbrir = QtWidgets.QAction(self)
+        self.actionAbrir.setObjectName("actionAbrir")
+        self.actionAbrir.setText("Open")
+        self.actionAbrir.triggered.connect(self.abrir_archivo)
+        self.actionGuardar = QtWidgets.QAction(self)
+        self.actionGuardar.setObjectName("actionGuardar")
+        self.actionGuardar.setText("Save")
+        self.actionExportar = QtWidgets.QAction(self)
+        self.actionExportar.setObjectName("actionExportar")
+        self.actionExportar.setText("Export to PDF")
+        self.actionSalir = QtWidgets.QAction(self)
+        self.actionSalir.setObjectName("actionSalir")
+        self.actionSalir.setText("Exit")
+        menuBar = self.menuBar()
+        # Creating menus using a QMenu object
+        fileMenu = QMenu("&File", self)
+        fileMenu.addAction(self.actionAbrir)
+        fileMenu.addAction(self.actionGuardar)
+        fileMenu.addAction(self.actionExportar)
+        fileMenu.addAction(self.actionSalir)
+        menuBar.addMenu(fileMenu)
+        # Creating menus using a title
+        editMenu = menuBar.addMenu("&Edit")
+        helpMenu = menuBar.addMenu("&Help")
 
     def abrir_archivo(self):
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
@@ -46,7 +70,7 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    app = QApplication([])
-    window = interfaz()
-    # window.show()
+    app = QApplication(sys.argv)
+    win = Window()
+    win.show()
     sys.exit(app.exec_())

@@ -1,17 +1,18 @@
-# -*- coding: utf-8 -*-
+#HRV Application
 
-# Form implementation generated from reading ui file 'interfaz.ui'
-#
-# Created by: PyQt5 UI code generator 5.12.3
-#
-# WARNING! All changes made in this file will be lost!
-
+import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
+class interfaz(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.init_window()
 
-class Ui_self(object):
-    def setupUi(self):
+    def init_window(self):
         self.setObjectName("self")
         self.resize(1024, 768)
         self.setStyleSheet("background-color: rgb(32, 74, 135);")
@@ -91,7 +92,7 @@ class Ui_self(object):
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, self):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("self", "AHRV"))
         self.label.setText(_translate("self", "<html><head/><body><p><img src=\":/logo/logo.svg\"/></p></body></html>"))
@@ -103,8 +104,24 @@ class Ui_self(object):
         self.pushButton_2.setText(_translate("self", "Export PDF"))
         self.menuArchivo.setTitle(_translate("self", "File"))
         self.actionOpen.setText(_translate("self", "Open"))
+        self.actionOpen.clicked.connect(self.abrir_archivo)
         self.actionSave.setText(_translate("self", "Save"))
         self.actionDownload.setText(_translate("self", "Download"))
         self.actionExport_PDF.setText(_translate("self", "Export PDF"))
         self.actionExit.setText(_translate("self", "Exit"))
-import resources_rc
+
+    def abrir_archivo(self):
+        self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat, *.hea)")[0]
+        self.button.setText(os.path.basename(self.file))
+
+def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    app = QApplication(sys.argv)
+    root = Root()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = interfaz()
+    # window.show()
+    sys.exit(app.exec_())

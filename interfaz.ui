@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>generalWindow</class>
- <widget class="QMainWindow" name="generalWindow">
+ <class>self</class>
+ <widget class="QMainWindow" name="self">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -133,7 +133,7 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuAarchivo">
+   <widget class="QMenu" name="menuArchivo">
     <property name="title">
      <string>File</string>
     </property>
@@ -143,7 +143,7 @@
     <addaction name="actionExport_PDF"/>
     <addaction name="actionExit"/>
    </widget>
-   <addaction name="menuAarchivo"/>
+   <addaction name="menuArchivo"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
