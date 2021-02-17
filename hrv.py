@@ -13,6 +13,7 @@ class Window(QMainWindow):
         self.init_window()
         self.resize(1024, 768)
         self.setWindowTitle('HRV Analitic')
+        self.setWindowIcon(QtGui.QIcon("favicon.svg"))
 
     def init_window(self):
         self.button = QPushButton('Abrir', self)
