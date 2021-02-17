@@ -13,15 +13,15 @@ class interfaz(QMainWindow):
         self.init_window()
 
     def init_window(self):
-        self.title = "HRV"
-        self.setStyleSheet("background-color: #1E1E1E; color: #D6D6D6; font: 10pt")
+        self.setWindowTitle('HRV Analitic')
+        self.setStyleSheet("background-color: #E6E6E6; color: #494949; font: 10pt")
         
         #boton de abrir
         self.button = QPushButton('Abrir', self)
         self.button.clicked.connect(self.abrir_archivo)
         self.button.move(150, 260)
         self.button.resize(120, 40)
-        self.button.setStyleSheet("background-color: #FFCC00; color: #1E1E1E")
+        self.button.setStyleSheet("background-color: #323e62; color: #e6e6e6")
         
         #Esto muestra la ventana
         self.showMaximized()
