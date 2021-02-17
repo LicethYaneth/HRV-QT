@@ -20,32 +20,82 @@
   <property name="styleSheet">
    <string notr="true">background-color: rgb(186, 189, 182);</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="mainWindow">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>10000000</width>
+     <height>10000000</height>
+    </size>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <widget class="QFrame" name="menuGrande">
+   <widget class="QWidget" name="verticalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>1021</width>
-      <height>108</height>
+      <x>7</x>
+      <y>84</y>
+      <width>1011</width>
+      <height>651</height>
      </rect>
     </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
+    <layout class="QVBoxLayout" name="ventanaGraficas">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <item>
+      <widget class="QWidget" name="graficaGrande" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="graficaPequena" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>200</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>1009</width>
+      <height>81</height>
+     </rect>
     </property>
-    <property name="maximumSize">
-     <size>
-      <width>1021</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="menuBar">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
      <item>
       <widget class="QLabel" name="logo">
        <property name="maximumSize">
@@ -123,7 +173,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="fileNameTextGroup">
        <item>
         <widget class="QLabel" name="fileNameText">
          <property name="text">
@@ -246,50 +296,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="graficaGrande" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>100</y>
-      <width>1021</width>
-      <height>441</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>1021</width>
-      <height>16777215</height>
-     </size>
-    </property>
-   </widget>
-   <widget class="QWidget" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>540</y>
-      <width>1021</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>1021</width>
-      <height>16777215</height>
-     </size>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -304,10 +310,17 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionPDF_Document_pdf"/>
+    </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionDownload"/>
-    <addaction name="actionExport_PDF"/>
+    <addaction name="menuExport"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuAbout_HRV">
@@ -334,14 +347,14 @@
     <string>Download</string>
    </property>
   </action>
-  <action name="actionExport_PDF">
-   <property name="text">
-    <string>Export PDF</string>
-   </property>
-  </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionPDF_Document_pdf">
+   <property name="text">
+    <string>PDF Document *.pdf</string>
    </property>
   </action>
  </widget>
