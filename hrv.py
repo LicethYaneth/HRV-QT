@@ -25,6 +25,7 @@ class MplCanvas(FigureCanvasQTAgg):
 class Window(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.ui = uic.loadUi('interfaz.ui',self)
         self.init_window()
         self.showMaximized()
 
