@@ -18,7 +18,6 @@ from matplotlib.figure import Figure
 class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=18, height=3, dpi=2):
         fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(411)
         self.axes = fig.add_subplot(414)
         super(MplCanvas, self).__init__(fig)
 
@@ -46,19 +45,9 @@ class Window(QMainWindow):
         sc = MplCanvas(self, width=35, height=3, dpi=50)
         sc.axes.plot(signal)
         
-        self.ui.horizontalLayout.addWidget(sc)
+        self.ui.ventanaGraficas.graficaPequena(sc)
         
-        toolbar = NavigationToolbar(sc, self)
-
-        #layout = QtWidgets.QVBoxLayout()
-        self.ui.horizontalLayout.addWidget(toolbar)
-        self.ui.horizontalLayout.addWidget(sc)
-        
-        
-        # Create a placeholder widget to hold our toolbar and canvas.
-        widget = QtWidgets.QWidget()
-        widget.setLayout(self.horizontalLayout)
-        self.setCentralWidget(widget)
+   
 
         self.show()
         
