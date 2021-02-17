@@ -1,6 +1,7 @@
 #HRV Application
 
 import sys
+import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import *
@@ -22,16 +23,23 @@ class interfaz(QMainWindow):
         self.button.move(150, 260)
         self.button.resize(120, 40)
         self.button.setStyleSheet("background-color: #FFCC00; color: #1E1E1E")
-        
+        self.ruta= QLabel(self)
+        self.ruta.setText("Buenassssss")
+        self.ruta.setStyleSheet("color:white")
+        self.ruta.move(500,300)
+        self.ruta.resize(900,300)
         #Esto muestra la ventana
         self.showMaximized()
 
     def abrir_archivo(self):
-        self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat, *.hea)")[0]
+        self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
         self.button.setText(os.path.basename(self.file))
+        #self.ruta.setText(os.path.(self.file))
+        self.ruta.setText(self.file)
+        
+        
 
 def main():
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
     app = QApplication(sys.argv)
     root = Root()
     sys.exit(app.exec_())
