@@ -31,29 +31,33 @@ class Window(QMainWindow):
 
     def init_window(self):
         self.ui = uic.loadUi('interfaz.ui',self)
-        self.actionOpen.clicked.connect(self.abrir_archivo)
-        self.ruta= QLabel(self)
+        self.actionOpen.triggered.connect(self.abrir_archivo)
+        #self.ruta= QLabel(self)
 
     def abrir_archivo(self):
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
         #self.pushButton_10.clicked.connect(self.abrir_archivo)
         #self.ruta.setText(os.path.(self.file))
-        self.ruta.setText(self.file)
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
         record = wfdb.rdrecord(self.file[:-4], channels=[0])
         signal=signals.reshape(record.sig_len)
+        
         sc = MplCanvas(self, width=35, height=3, dpi=50)
         sc.axes.plot(signal)
+        
+        self.ui.horizontalLayout.addWidget(sc)
+        
         toolbar = NavigationToolbar(sc, self)
 
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(toolbar)
-        layout.addWidget(sc)
-
+        #layout = QtWidgets.QVBoxLayout()
+        self.ui.horizontalLayout.addWidget(toolbar)
+        self.ui.horizontalLayout.addWidget(sc)
+        
+        
         # Create a placeholder widget to hold our toolbar and canvas.
         widget = QtWidgets.QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(self.horizontalLayout)
         self.setCentralWidget(widget)
 
         self.show()
