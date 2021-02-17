@@ -2,4 +2,7 @@
   <qresource prefix="logo">
     <file>logo.svg</file>
   </qresource>
+  <qresource prefix="favicon">
+    <file>favicon.svg</file>
+  </qresource>
 </RCC>
