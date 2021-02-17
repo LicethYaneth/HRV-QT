@@ -28,7 +28,6 @@ class interfaz(QMainWindow):
         self.ruta.setStyleSheet("color:white")
         self.ruta.move(500,300)
         self.ruta.resize(900,300)
-        self.button.setStyleSheet("background-color: #323e62; color: #e6e6e6")
         
         #Esto muestra la ventana
         self.showMaximized()
