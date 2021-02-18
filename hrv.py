@@ -45,7 +45,6 @@ class Window(QMainWindow):
 
     def abrir_archivo(self):
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
-<<<<<<< HEAD
         #self.pushButton_10.clicked.connect(self.abrir_archivo)
         #self.ruta.setText(os.path.(self.file))
         #self.ruta.setText(self.file)
@@ -71,9 +70,7 @@ class Window(QMainWindow):
         # widget.setLayout(layout)
         # self.setCentralWidget(widget)
         # elf.show()
-
-=======
-
+        
         def baseline_als(y, lam, p, niter=10):
             L = len(y)
             D = sparse.diags([1,-2,1],[0,-1,-2], shape=(L,L-2))
@@ -130,7 +127,6 @@ class Window(QMainWindow):
 
  
         
->>>>>>> baf9692435ac0499a456bcbb348d067e8941fbdd
 
 def main():
     app = QApplication(sys.argv)
