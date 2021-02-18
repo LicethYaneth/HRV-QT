@@ -86,20 +86,9 @@ class Window(QMainWindow):
 
         
     def baseline_correct(self):
-             
-        
-        self.ui.ventanaGraficas.addWidget(self.toolbar1)
         self.sc1.axes.plot(self.signal_com)
-        self.ui.ventanaGraficas.addWidget(self.sc1)
         self.sc.axes.plot(self.signal_com)
-        self.ui.ventanaGraficas.addWidget(self.sc)
-        self.ui.ventanaGraficas.addWidget(self.toolbar)
-
-
-
-
- 
-        
+        self.sc.show()
 
 def main():
     app = QApplication(sys.argv)
