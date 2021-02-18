@@ -54,6 +54,7 @@
       <property name="rightMargin">
        <number>10</number>
       </property>
+<<<<<<< HEAD
       <item>
        <widget class="QWidget" name="widgetBig" native="true"/>
       </item>
@@ -67,6 +68,9 @@
         </property>
        </widget>
       </item>
+=======
+       
+>>>>>>> baf9692435ac0499a456bcbb348d067e8941fbdd
      </layout>
     </item>
     <item row="0" column="0">
@@ -449,13 +453,12 @@
       <string>Export</string>
      </property>
      <addaction name="separator"/>
-     <addaction name="actionPDF_Document_pdf"/>
      <addaction name="actionExcel_Microsoft_Office_xls"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionDownload"/>
-    <addaction name="menuExport"/>
+    <addaction name="actionExport_PDF"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuAbout_HRV">
@@ -497,17 +500,17 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="actionExport_PDF">
    <property name="text">
-    <string>Exit</string>
+    <string>Export PDF</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionPDF_Document_pdf">
+  <action name="actionExit">
    <property name="text">
-    <string>PDF Document *.pdf</string>
+    <string>Exit</string>
    </property>
   </action>
   <action name="actionExcel_Microsoft_Office_xls">
