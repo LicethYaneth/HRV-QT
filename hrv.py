@@ -15,6 +15,8 @@ from PyQt5 import uic
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
+matplotlib.use('QT5Agg')
+
 
 class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=18, height=3, dpi=2):
@@ -40,25 +42,30 @@ class Window(QMainWindow):
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
         #self.pushButton_10.clicked.connect(self.abrir_archivo)
         #self.ruta.setText(os.path.(self.file))
-        self.ruta.setText(self.file)
+        #self.ruta.setText(self.file)
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
         record = wfdb.rdrecord(self.file[:-4], channels=[0])
         signal=signals.reshape(record.sig_len)
-        sc = MplCanvas(self, width=35, height=3, dpi=50)
-        sc.axes.plot(signal)
-        toolbar = NavigationToolbar(sc, self)
+        self.sc = MplCanvas(self, width=35, height=3, dpi=50)        
+        self.ui = uic.loadUi('interfaz.ui',self)
+        self.ui.ventanaGraficas.addWidget(self, self.sc, 2, 1, 1, 1)
+        # self.ui.widget1.addLayout(self.sc.axes.plot(signal))
 
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(toolbar)
-        layout.addWidget(sc)
+        #ventanaGraficas.addWidget(self.sc.axes.plot(signal))
+
+
+        # self.toolbar = NavigationToolbar(self.sc, self)
+        # layout = QtWidgets.QVBoxLayout()
+        # layout.addWidget(self.toolbar)
+        # layout.addWidget(self.sc)
 
         # Create a placeholder widget to hold our toolbar and canvas.
-        widget = QtWidgets.QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
-        self.show()
-        
+        # widget = QtWidgets.QWidget()
+        # widget.setLayout(layout)
+        # self.setCentralWidget(widget)
+        # elf.show()
+
 
 def main():
     app = QApplication(sys.argv)
