@@ -80,16 +80,15 @@ class Window(QMainWindow):
 
     def normal_plot(self):
         
-        self.sc1 = MplCanvas(self, width=35, height=8, dpi=50)
+        self.sc1 = MplCanvas(self, width=20, height=8, dpi=50)
         self.sc1.axes.plot(self.signal)
-        self.sc = MplCanvas(self, width=35, height=3, dpi=50)
+        self.sc = MplCanvas(self, width=35, height=1, dpi=50)
         self.sc.axes.plot(self.signal)
-        self.toolbar = QToolBar(self.ui.widgetBig)
-        self.toolbar1 = QToolBar(self.ui.widgetSmall)
-
-        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarBig,self.toolbar1)
+        self.toolbar = NavigationToolbar(self.sc, self)
+        self.toolbar1 = NavigationToolbar(self.sc1, self)
+        self.ui.ventanaGraficas.addWidget(self.toolbar1)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetBig, self.sc1)
-        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarSmall,self.toolbar)
+        self.ui.ventanaGraficas.addWidget(self.toolbar)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetSmall, self.sc)
         self.show()
     
