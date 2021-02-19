@@ -82,7 +82,7 @@ class Window(QMainWindow):
         
         self.sc1 = MplCanvas(self, width=20, height=8, dpi=50)
         self.sc1.axes.plot(self.signal)
-        self.sc = MplCanvas(self, width=35, height=1, dpi=50)
+        self.sc = MplCanvas(self, width=35, height=2, dpi=50)
         self.sc.axes.plot(self.signal)
         self.toolbar = NavigationToolbar(self.sc, self)
         self.toolbar1 = NavigationToolbar(self.sc1, self)
