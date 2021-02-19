@@ -13,6 +13,9 @@ import matplotlib
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
+import pandas as pd
+from scipy.signal import find_peaks
+
 
 from PyQt5 import uic
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
@@ -40,6 +43,7 @@ class Window(QMainWindow):
         self.pushButtonOpen.clicked.connect(self.abrir_archivo)
         self.baseLineCorrection.clicked.connect(self.baseline_correct)
         self.normalGraphic.clicked.connect(self.normal_plot)
+        self.RPeaks.clicked.connect(self.peaks)
         self.ui.showMaximized()
 
         #self.ruta= QLabel(self)
@@ -70,12 +74,16 @@ class Window(QMainWindow):
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
         record = wfdb.rdrecord(self.file[:-4], channels=[0])
         self.signal=signals.reshape(record.sig_len)
-        # signal_bas=baseline_als(self.signal[:int(len(self.signal)/2)],100,0.001)
-        # signal_bas_2=baseline_als(self.signal[int(len(self.signal)/2):int(len(self.signal))],100,0.001)
-        # sub_1=np.subtract(self.signal[:int(len(self.signal)/2)],signal_bas)
-        # sub_2=np.subtract(self.signal[int(len(self.signal)/2):int(len(self.signal))],signal_bas_2)
-        # self.signal_com=np.concatenate((sub_1,sub_2),None)
+        signal_bas=baseline_als(self.signal[:int(len(self.signal)/2)],100,0.001)
+        signal_bas_2=baseline_als(self.signal[int(len(self.signal)/2):int(len(self.signal))],100,0.001)
+        sub_1=np.subtract(self.signal[:int(len(self.signal)/2)],signal_bas)
+        sub_2=np.subtract(self.signal[int(len(self.signal)/2):int(len(self.signal))],signal_bas_2)
+        self.signal_com=np.concatenate((sub_1,sub_2),None)
         
+        signal_prep=pd.DataFrame(self.signal_com)
+        self.signal_prep_w=signal_prep.rolling(5).mean() 
+        x=self.signal_prep_w.values.reshape(record.sig_len)
+        self.peaks_1, _ = find_peaks(x, height=(1))
         
 
     def normal_plot(self):
@@ -89,10 +97,12 @@ class Window(QMainWindow):
         self.ui.ventanaGraficas.addWidget(self.toolbar1)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarBig, self.toolbar1)
         self.ui.toolbar1.setFixedHeight(38)
+        self.ui.toolbar1.setStyleSheet('background-color: white')
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetBig, self.sc1)
         self.ui.ventanaGraficas.addWidget(self.toolbar)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarSmall, self.toolbar)
         self.ui.toolbar.setFixedHeight(38)
+        self.ui.toolbar.setStyleSheet('background-color: white')
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetSmall, self.sc)
         self.ui.sc.setFixedHeight(200)
         self.show()
@@ -102,7 +112,29 @@ class Window(QMainWindow):
     def baseline_correct(self):
         self.sc1.axes.plot(self.signal_com)
         self.sc.axes.plot(self.signal_com)
-        self.sc.show()
+
+    def peaks(self):
+        self.sc2 = MplCanvas(self, width=20, height=8, dpi=50)
+        self.sc2.axes.plot(self.signal_prep_w)
+        self.sc2.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
+        self.sc3 = MplCanvas(self, width=35, height=2, dpi=50)
+        self.sc3.axes.plot(self.signal_prep_w)
+        self.sc3.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
+        
+        self.toolbar2 = NavigationToolbar(self.sc2, self)
+        self.toolbar3 = NavigationToolbar(self.sc3, self)
+        self.ui.ventanaGraficas.addWidget(self.toolbar2)
+        self.ui.ventanaGraficas.replaceWidget(self.toolbar1,self.toolbar2)
+        self.ui.toolbar2.setFixedHeight(38)
+        self.ui.toolbar2.setStyleSheet('background-color: white')
+        self.ui.ventanaGraficas.replaceWidget(self.sc1,self.sc2)
+        self.ui.ventanaGraficas.addWidget(self.toolbar3)
+        self.ui.ventanaGraficas.replaceWidget(self.toolbar,self.toolbar3)
+        self.ui.toolbar3.setFixedHeight(38)
+        self.ui.toolbar3.setStyleSheet('background-color: white')
+        self.ui.ventanaGraficas.replaceWidget(self.sc,self.sc3)
+        self.ui.sc3.setFixedHeight(200)
+        plt.show()
 
 def main():
     app = QApplication(sys.argv)
