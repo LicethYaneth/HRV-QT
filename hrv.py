@@ -37,7 +37,7 @@ class Window(QMainWindow):
 
     def init_window(self):
         self.ui = uic.loadUi('interfaz.ui',self)
-        self.actionOpen.triggered.connect(self.abrir_archivo)
+        self.pushButtonOpen.clicked.connect(self.abrir_archivo)
         self.baseLineCorrection.clicked.connect(self.baseline_correct)
         self.normalGraphic.clicked.connect(self.normal_plot)
         self.ui.showMaximized()
@@ -87,9 +87,17 @@ class Window(QMainWindow):
         self.toolbar = NavigationToolbar(self.sc, self)
         self.toolbar1 = NavigationToolbar(self.sc1, self)
         self.ui.ventanaGraficas.addWidget(self.toolbar1)
+        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarBig, self.toolbar1)
+        self.ui.widgetToolbarBig.minimumHeight(37)
+        self.ui.widgetToolbarBig.maximumHeight(37)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetBig, self.sc1)
         self.ui.ventanaGraficas.addWidget(self.toolbar)
+        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarSmall, self.toolbar)
+        self.ui.widgetToolbarSmall.minimumHeight(37)
+        self.ui.widgetToolbarSmall.maximumHeight(37)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetSmall, self.sc)
+        self.ui.widgetSmall.minimumHeight(200)
+        self.ui.widgetSmall.maximumHeight(200)
         self.show()
     
 
