@@ -43,6 +43,7 @@ class Window(QMainWindow):
         self.ui = uic.loadUi('interfaz.ui',self)
         self.ui.progressBar.setVisible(False)
         self.ui.titleProgress.setVisible(False)
+        #self.pushButtonOpen.setStyleSheet("QWidget { background-color: white }")
         self.pushButtonOpen.clicked.connect(self.abrir_archivo)
         self.baseLineCorrection.clicked.connect(self.baseline_correct)
         self.normalGraphic.clicked.connect(self.normal_plot)
@@ -54,7 +55,9 @@ class Window(QMainWindow):
     def abrir_archivo(self):
         self.ui.progressBar.setVisible(True)
         self.ui.titleProgress.setVisible(True)
-        self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
+        self.windowFile = QFileDialog()
+        self.windowFile.setStyleSheet("QWidget {background-color: #ffffff}")
+        self.file = QFileDialog.getOpenFileName(self.windowFile, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
 
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
