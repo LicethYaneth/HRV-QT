@@ -68,14 +68,15 @@ class Window(QMainWindow):
 
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
-        record = wfdb.rdrecord(self.file[:-4], channels=[0])
-        signal=signals.reshape(record.sig_len)
+        self.record = wfdb.rdrecord(self.file[:-4], channels=[0])
+        signal=signals.reshape(self.record.sig_len)
         filename = QFileInfo(self.file).fileName()
 
         self.ui.fileNameText.setText(self.file)
         self.ui.recordNameText.setText(filename)
-        self.ui.fsText.setText(str(record.__dict__['fs']))
-        self.ui.lenghtSignalText.setText(str(record.__dict__['sig_len']))
+        self.ui.fsText.setText(str(self.record.__dict__['fs']))
+        self.ui.lenghtSignalText.setText(str(self.record.__dict__['sig_len']))
+        self.metadata()
 
 
         
@@ -176,6 +177,11 @@ class Window(QMainWindow):
         self.ui.sc3.setFixedHeight(200)
         plt.show()
 
+<<<<<<< HEAD
+    def metadata(self):
+        for key,value in self.record.__dict__.items():
+            print(key,value)
+=======
 class Dialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(Dialog, self).__init__(*args, **kwargs)
@@ -187,6 +193,7 @@ class Dialog(QDialog):
 
     def closeModal(self):
         self.close()
+>>>>>>> 7d3a9aa3818e874b24dad16eeb46366777e7761b
 
 def main():
     app = QApplication(sys.argv)
