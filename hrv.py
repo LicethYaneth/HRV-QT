@@ -14,6 +14,7 @@ import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 import pandas as pd
+import statistics as st
 from scipy.signal import find_peaks
 
 
@@ -40,6 +41,8 @@ class Window(QMainWindow):
 
     def init_window(self):
         self.ui = uic.loadUi('interfaz.ui',self)
+        self.ui.progressBar.setVisible(False)
+        self.ui.titleProgress.setVisible(False)
         self.pushButtonOpen.clicked.connect(self.abrir_archivo)
         self.baseLineCorrection.clicked.connect(self.baseline_correct)
         self.normalGraphic.clicked.connect(self.normal_plot)
@@ -49,12 +52,21 @@ class Window(QMainWindow):
         #self.ruta= QLabel(self)
 
     def abrir_archivo(self):
+        self.ui.progressBar.setVisible(True)
+        self.ui.titleProgress.setVisible(True)
         self.file = QFileDialog.getOpenFileName(self, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
 
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
         record = wfdb.rdrecord(self.file[:-4], channels=[0])
         signal=signals.reshape(record.sig_len)
+        filename = QFileInfo(self.file).fileName()
+
+        self.ui.fileNameText.setText(self.file)
+        self.ui.recordNameText.setText(filename)
+        self.ui.fsText.setText(str(record.__dict__['fs']))
+        self.ui.lenghtSignalText.setText(str(record.__dict__['sig_len']))
+
 
         
         def baseline_als(y, lam, p, niter=10):
@@ -81,10 +93,26 @@ class Window(QMainWindow):
         self.signal_com=np.concatenate((sub_1,sub_2),None)
         
         signal_prep=pd.DataFrame(self.signal_com)
-        self.signal_prep_w=signal_prep.rolling(5).mean() 
+        self.signal_prep_w=signal_prep.rolling(10).mean() 
         x=self.signal_prep_w.values.reshape(record.sig_len)
-        self.peaks_1, _ = find_peaks(x, height=(1))
+        self.peaks_1, _ = find_peaks(x, height=(0.75))
+        self.desv=np.std(self.signal_prep_w.values[self.peaks_1])
+        self.meanp=np.mean(self.signal_prep_w.values[self.peaks_1])
+        self.peaks_out=[]
+        self.peaks_pos=[]
+        self.peaks_out_min=[]
+        self.peaks_pos_min=[]
+        print(self.desv)
+        for i in range(len(self.peaks_1)):
+            if self.signal_prep_w.values[self.peaks_1[i]]>self.meanp+2*self.desv:
+                self.peaks_out.append(self.signal_prep_w.values[self.peaks_1[i]])
+                self.peaks_pos.append(self.peaks_1[i])
         
+        self.ui.progressBar.setVisible(False)
+        self.ui.titleProgress.setVisible(False)
+    
+
+
 
     def normal_plot(self):
         
@@ -117,9 +145,11 @@ class Window(QMainWindow):
         self.sc2 = MplCanvas(self, width=20, height=8, dpi=50)
         self.sc2.axes.plot(self.signal_prep_w)
         self.sc2.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
+        self.sc2.axes.plot(self.peaks_pos,self.peaks_out,'o',color='green')
         self.sc3 = MplCanvas(self, width=35, height=2, dpi=50)
         self.sc3.axes.plot(self.signal_prep_w)
         self.sc3.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
+        self.sc3.axes.plot(self.peaks_pos,self.peaks_out,'o',color='green')
         
         self.toolbar2 = NavigationToolbar(self.sc2, self)
         self.toolbar3 = NavigationToolbar(self.sc3, self)

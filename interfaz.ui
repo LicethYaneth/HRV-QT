@@ -724,6 +724,16 @@
         <property name="styleSheet">
          <string notr="true">background-color: rgb(0, 83, 114);</string>
         </property>
+        <widget class="QWidget" name="widget" native="true">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>30</y>
+           <width>851</width>
+           <height>371</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </item>
       <item>
