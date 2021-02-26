@@ -51,7 +51,7 @@ class Window(QMainWindow):
         self.ui.showMaximized()
 
         ## ESTE ES EL BOTON DEL DIALOGO ##
-        self.pushButtonExport.clicked.connect(self.mostrarDialogo)
+        self.metadata.clicked.connect(self.mostrarDialogo)
 
     def mostrarDialogo(self):
         dialog = Dialog(self)  # self hace referencia al padre
