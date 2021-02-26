@@ -505,7 +505,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="normalGraphic">
+            <widget class="QPushButton" name="pushNormalGraphic">
              <property name="minimumSize">
               <size>
                <width>161</width>
@@ -527,7 +527,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="baseLineCorrection">
+            <widget class="QPushButton" name="pushBaseLineCorrection">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -574,7 +574,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="metadata">
+            <widget class="QPushButton" name="pushMetadata">
              <property name="minimumSize">
               <size>
                <width>161</width>
@@ -608,7 +608,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="RPeaks">
+            <widget class="QPushButton" name="pushRPeaks">
              <property name="minimumSize">
               <size>
                <width>161</width>
