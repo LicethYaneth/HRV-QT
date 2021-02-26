@@ -166,6 +166,7 @@ class Window(QMainWindow):
         self.ui.sc3.setFixedHeight(200)
         plt.show()
 
+
 def main():
     app = QApplication(sys.argv)
     root = Root()
