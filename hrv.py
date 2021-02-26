@@ -50,6 +50,13 @@ class Window(QMainWindow):
         self.RPeaks.clicked.connect(self.peaks)
         self.ui.showMaximized()
 
+        ## ESTE ES EL BOTON DEL DIALOGO ##
+        self.pushButtonExport.clicked.connect(self.mostrarDialogo)
+
+    def mostrarDialogo(self):
+        dialog = Dialog(self)  # self hace referencia al padre
+        dialog.show()
+
         #self.ruta= QLabel(self)
 
     def abrir_archivo(self):
@@ -169,6 +176,18 @@ class Window(QMainWindow):
         self.ui.sc3.setFixedHeight(200)
         plt.show()
 
+class Dialog(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(Dialog, self).__init__(*args, **kwargs)
+        self.uiMetadataModal = uic.loadUi('metadataModal.ui',self)
+        self.uiMetadataModal.setWindowTitle("Resumen del archivo {{fileName}}")
+        self.uiMetadataModal.setWindowFlags(Qt.CustomizeWindowHint | Qt.FramelessWindowHint | Qt.Dialog | Qt.WindowStaysOnTopHint)
+        #self.uiMetadataModal.buttonBox.accepted.connect(self)
+        self.uiMetadataModal.buttonBox.rejected.connect(self.closeModal)
+
+    def closeModal(self):
+        self.close()
+
 def main():
     app = QApplication(sys.argv)
     root = Root()
@@ -176,7 +195,7 @@ def main():
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
+    #app.setStyle('Adwaita')
     win = Window()
     win.show()
     sys.exit(app.exec_())
