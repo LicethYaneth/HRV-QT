@@ -765,12 +765,23 @@
            <x>0</x>
            <y>0</y>
            <width>340</width>
-           <height>582</height>
+           <height>576</height>
           </rect>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 83, 114);</string>
          </property>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>341</width>
+            <height>581</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="LayoutItemsMetadata"/>
+         </widget>
         </widget>
        </widget>
       </item>

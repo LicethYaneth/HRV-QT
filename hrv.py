@@ -45,9 +45,9 @@ class Window(QMainWindow):
         self.ui.titleProgress.setVisible(False)
         #self.pushButtonOpen.setStyleSheet("QWidget { background-color: white }")
         self.pushButtonOpen.clicked.connect(self.abrir_archivo)
-        self.baseLineCorrection.clicked.connect(self.baseline_correct)
-        self.normalGraphic.clicked.connect(self.normal_plot)
-        self.RPeaks.clicked.connect(self.peaks)
+        self.pushBaseLineCorrection.clicked.connect(self.baseline_correct)
+        self.pushNormalGraphic.clicked.connect(self.normal_plot)
+        self.pushRPeaks.clicked.connect(self.peaks)
         self.ui.showMaximized()
 
         ## ESTE ES EL BOTON DEL DIALOGO ##
@@ -56,6 +56,7 @@ class Window(QMainWindow):
     def mostrarDialogo(self):
         dialog = Dialog(self)  # self hace referencia al padre
         dialog.show()
+        dialog.metadata(self=self)
 
         #self.ruta= QLabel(self)
 
@@ -76,7 +77,7 @@ class Window(QMainWindow):
         self.ui.recordNameText.setText(filename)
         self.ui.fsText.setText(str(self.record.__dict__['fs']))
         self.ui.lenghtSignalText.setText(str(self.record.__dict__['sig_len']))
-        self.metadata()
+    
 
 
         
@@ -95,8 +96,8 @@ class Window(QMainWindow):
         
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
-        record = wfdb.rdrecord(self.file[:-4], channels=[0])
-        self.signal=signals.reshape(record.sig_len)
+        self.record = wfdb.rdrecord(self.file[:-4], channels=[0])
+        self.signal=signals.reshape(self.record.sig_len)
         signal_bas=baseline_als(self.signal[:int(len(self.signal)/2)],100,0.001)
         signal_bas_2=baseline_als(self.signal[int(len(self.signal)/2):int(len(self.signal))],100,0.001)
         sub_1=np.subtract(self.signal[:int(len(self.signal)/2)],signal_bas)
@@ -105,8 +106,8 @@ class Window(QMainWindow):
         
         signal_prep=pd.DataFrame(self.signal_com)
         self.signal_prep_w=signal_prep.rolling(10).mean() 
-        x=self.signal_prep_w.values.reshape(record.sig_len)
-        self.peaks_1, _ = find_peaks(x, height=(0.75))
+        x=self.signal_prep_w.values.reshape(self.record.sig_len)
+        self.peaks_1, _ = find_peaks(x, height=(0.7))
         self.desv=np.std(self.signal_prep_w.values[self.peaks_1])
         self.meanp=np.mean(self.signal_prep_w.values[self.peaks_1])
         self.peaks_out=[]
@@ -121,6 +122,7 @@ class Window(QMainWindow):
         
         self.ui.progressBar.setVisible(False)
         self.ui.titleProgress.setVisible(False)
+        self.normal_plot()
     
 
 
@@ -177,9 +179,9 @@ class Window(QMainWindow):
         self.ui.sc3.setFixedHeight(200)
         plt.show()
 
-    def metadata(self):
-        for key,value in self.record.__dict__.items():
-            print(key,value)
+
+   
+
 class Dialog(QDialog):
     def __init__(self, *args, **kwargs):
         super(Dialog, self).__init__(*args, **kwargs)
@@ -188,6 +190,24 @@ class Dialog(QDialog):
         self.uiMetadataModal.setWindowFlags(Qt.CustomizeWindowHint | Qt.FramelessWindowHint | Qt.Dialog | Qt.WindowStaysOnTopHint)
         #self.uiMetadataModal.buttonBox.accepted.connect(self)
         self.uiMetadataModal.buttonBox.rejected.connect(self.closeModal)
+
+    def metadata(dialog,self):
+        layout = QHBoxLayout()
+        label = QLabel('<center><b>Record metadata</b></center>')
+        layout.addWidget(label)
+        dialog.uiMetadataModal.verticalitemsmetadata.addLayout(layout)
+        
+        for key,value in self.record.__dict__.items():
+            layout = QHBoxLayout()
+            label = QLabel('<b>'+str(key)+'</b>')
+            label.setMaximumWidth(200)
+            layout.addWidget(label)
+            layout.addWidget(QLabel(str(value)))
+            dialog.uiMetadataModal.verticalitemsmetadata.addLayout(layout)
+           
+    
+
+
 
     def closeModal(self):
         self.close()
