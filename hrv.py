@@ -21,7 +21,8 @@ from scipy.signal import find_peaks
 from PyQt5 import uic
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-
+from hrvanalysis import get_time_domain_features
+from hrvanalysis import get_frequency_domain_features,get_geometrical_features
 matplotlib.use('QT5Agg')
 
 
@@ -61,12 +62,11 @@ class Window(QMainWindow):
         #self.ruta= QLabel(self)
 
     def abrir_archivo(self):
-        self.ui.progressBar.setVisible(True)
-        self.ui.titleProgress.setVisible(True)
         self.windowFile = QFileDialog()
         self.windowFile.setStyleSheet("QWidget {background-color: #ffffff}")
         self.file = QFileDialog.getOpenFileName(self.windowFile, "Selecciona un archivo", "/home/", "PDF Files (*.dat)")[0]
-
+        self.ui.progressBar.setVisible(True)
+        self.ui.titleProgress.setVisible(True)
         record = wfdb.rdrecord(self.file[:-4]) 
         signals, fields = wfdb.rdsamp(self.file[:-4], channels=[0])
         self.record = wfdb.rdrecord(self.file[:-4], channels=[0])
@@ -112,6 +112,8 @@ class Window(QMainWindow):
         self.meanp=np.mean(self.signal_prep_w.values[self.peaks_1])
         self.peaks_out=[]
         self.peaks_pos=[]
+        self.peaks_fpos=[]
+        self.peaks_fout=[]
         self.peaks_out_min=[]
         self.peaks_pos_min=[]
         print(self.desv)
@@ -119,33 +121,57 @@ class Window(QMainWindow):
             if self.signal_prep_w.values[self.peaks_1[i]]>self.meanp+2*self.desv:
                 self.peaks_out.append(self.signal_prep_w.values[self.peaks_1[i]])
                 self.peaks_pos.append(self.peaks_1[i])
+            else:
+                self.peaks_fpos.append(self.peaks_1[i])
+                self.peaks_fout.append(self.signal_prep_w.values[self.peaks_1[i]])
+
+        #------ SDANN --------   
+        num_seg=int(record.sig_len/(200*60*5))
+        time_5min=200*60*5 
+        Useg_5min=np.zeros(num_seg)
+        seg_5min=np.zeros(num_seg)
+        temp=0
+        for i in range(num_seg):
+            Useg_5min[i]=temp
+            temp=temp+time_5min   
         
+        for j in range(len(Useg_5min)-1):
+            picos=np.array(self.peaks_fpos)[(np.array(self.peaks_fpos)>Useg_5min[j]) & (Useg_5min[j+1]>=np.array(self.peaks_fpos))]
+            intervalosNN5 = np.zeros(picos.shape)
+            for i in range(len(picos)-1):
+                intervalosNN5[i]=picos[i+1]-picos[i]
+            seg_5min[j]=np.mean(intervalosNN5)
+
+        self.sdann=st.stdev(seg_5min)
+        #-------- SDNN INDEX -------
+        seg_5min_sd=np.zeros(num_seg)
+        for j in range(num_seg-1):
+            picos=self.peaks_1[(self.peaks_1>Useg_5min[j]) & (Useg_5min[j+1]>=self.peaks_1)]
+            intervalosNN5 = np.zeros(picos.shape)
+            for i in range(len(picos)-1):
+                intervalosNN5[i]=picos[i+1]-picos[i]
+            if len(intervalosNN5)!=0:
+                seg_5min_sd[j]=st.stdev(intervalosNN5)
+        self.sdnn_index= np.mean(seg_5min_sd)
+
         self.ui.progressBar.setVisible(False)
         self.ui.titleProgress.setVisible(False)
         self.normal_plot()
+        self.metrics()
     
 
 
 
     def normal_plot(self):
         
-        self.sc1 = MplCanvas(self, width=20, height=8, dpi=50)
+        self.sc1 = MplCanvas(self, width=30, height=18, dpi=50)
         self.sc1.axes.plot(self.signal)
-        self.sc = MplCanvas(self, width=35, height=2, dpi=50)
-        self.sc.axes.plot(self.signal)
-        self.toolbar = NavigationToolbar(self.sc, self)
         self.toolbar1 = NavigationToolbar(self.sc1, self)
         self.ui.ventanaGraficas.addWidget(self.toolbar1)
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarBig, self.toolbar1)
         self.ui.toolbar1.setFixedHeight(38)
         self.ui.toolbar1.setStyleSheet('background-color: white')
         self.ui.ventanaGraficas.replaceWidget(self.ui.widgetBig, self.sc1)
-        self.ui.ventanaGraficas.addWidget(self.toolbar)
-        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetToolbarSmall, self.toolbar)
-        self.ui.toolbar.setFixedHeight(38)
-        self.ui.toolbar.setStyleSheet('background-color: white')
-        self.ui.ventanaGraficas.replaceWidget(self.ui.widgetSmall, self.sc)
-        self.ui.sc.setFixedHeight(200)
         self.show()
     
 
@@ -155,32 +181,152 @@ class Window(QMainWindow):
         self.sc.axes.plot(self.signal_com)
 
     def peaks(self):
-        self.sc2 = MplCanvas(self, width=20, height=8, dpi=50)
+            
+        #np.delete(self.peaks_1,list(self.peaks_pos))
+        self.sc2 = MplCanvas(self, width=30, height=18, dpi=50)
         self.sc2.axes.plot(self.signal_prep_w)
-        self.sc2.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
-        self.sc2.axes.plot(self.peaks_pos,self.peaks_out,'o',color='green')
-        self.sc3 = MplCanvas(self, width=35, height=2, dpi=50)
-        self.sc3.axes.plot(self.signal_prep_w)
-        self.sc3.axes.plot(self.peaks_1, self.signal_prep_w.values[self.peaks_1], "o")
-        self.sc3.axes.plot(self.peaks_pos,self.peaks_out,'o',color='green')
+        self.sc2.axes.plot(self.peaks_fpos, self.signal_prep_w.values[self.peaks_fpos], "o")
+        #self.sc2.axes.plot(self.peaks_pos,self.peaks_out,'o',color='green')
         
         self.toolbar2 = NavigationToolbar(self.sc2, self)
-        self.toolbar3 = NavigationToolbar(self.sc3, self)
         self.ui.ventanaGraficas.addWidget(self.toolbar2)
         self.ui.ventanaGraficas.replaceWidget(self.toolbar1,self.toolbar2)
         self.ui.toolbar2.setFixedHeight(38)
         self.ui.toolbar2.setStyleSheet('background-color: white')
         self.ui.ventanaGraficas.replaceWidget(self.sc1,self.sc2)
-        self.ui.ventanaGraficas.addWidget(self.toolbar3)
-        self.ui.ventanaGraficas.replaceWidget(self.toolbar,self.toolbar3)
-        self.ui.toolbar3.setFixedHeight(38)
-        self.ui.toolbar3.setStyleSheet('background-color: white')
-        self.ui.ventanaGraficas.replaceWidget(self.sc,self.sc3)
-        self.ui.sc3.setFixedHeight(200)
         plt.show()
 
+    def metrics(self):
+        import pyhrv.tools as tools
+        intervalosNN = tools.nn_intervals(self.peaks_fpos)
+        time_domain_features = get_time_domain_features(intervalosNN[intervalosNN!=0])
+        frecuency_domain_features= get_frequency_domain_features(intervalosNN)
+        geometrical_features= get_geometrical_features(intervalosNN)
 
+
+        self.ui.scrollAreaFeatures.setStyleSheet('background-color: white')
+
+        layout = QHBoxLayout()   
+        label = QLabel('<h3>Time Domain Features<h3>')
+        label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        label.setStyleSheet("color: rgb(59,59,59)")
+        label.setMaximumWidth(290)        
+        layout.addWidget(label)
+        self.ui.verticalLayout_features.addLayout(layout)
+
+
+        time_domain_features_to_show={'SDNN':time_domain_features['sdnn'],'SDSD':time_domain_features['sdsd'],'SDANN':self.sdann,'RMSSD':time_domain_features['rmssd']}
+        time_domain_features_to_show2={'NN20 Count':time_domain_features['nni_20'],'NN50 Count':time_domain_features['nni_50'],'PNN50 Count':time_domain_features['pnni_50'],'PNN20 Count':time_domain_features['pnni_20']}
+
+        for key,value in time_domain_features_to_show.items():
+            layout = QVBoxLayout()
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel("{:.4f}".format(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features1.addLayout(layout)
+
+        for key,value in time_domain_features_to_show2.items():
+            layout = QVBoxLayout()
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel("{:.4f}".format(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features2.addLayout(layout)
+
+        frecuency_domain_features_to_show={'LF':frecuency_domain_features['lf'],'HF':frecuency_domain_features['hf'],'VLF':frecuency_domain_features['vlf']}
+        frecuency_domain_features_to_show2={'LF norm':frecuency_domain_features['vlf'],'HF norm':frecuency_domain_features['hfnu'],'Total power':frecuency_domain_features['total_power']}
+        
+        layout = QHBoxLayout()         
+        label = QLabel('<h3>Frecuency Domain Features</h3>')
+        label.setStyleSheet("color: rgb(59,59,59)")
+        label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        label.setMaximumWidth(290)        
+        layout.addWidget(label)
+        self.ui.verticalLayout_features3.addLayout(layout)
+        
+        for key,value in frecuency_domain_features_to_show.items():
+            layout = QVBoxLayout()        
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel("{:.4f}".format(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features4.addLayout(layout)
+        for key,value in frecuency_domain_features_to_show2.items():
+            layout = QVBoxLayout()        
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel("{:.4f}".format(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features5.addLayout(layout)
+        
+        geometrical_features_to_show={'TINN':geometrical_features['tinn']}
+        geometrical_features_to_show2={'Triangular Index':geometrical_features['triangular_index']}
+
+        layout = QHBoxLayout() 
+        label = QLabel('<h3>Geometrical Domain Features</h3>')
+        label.setStyleSheet("color: rgb(59,59,59)")
+        label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        label.setMaximumWidth(290)        
+        layout.addWidget(label)
+        self.ui.verticalLayout_features6.addLayout(layout)
+
+        for key,value in geometrical_features_to_show2.items():
+            layout = QVBoxLayout()        
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel("{:.4f}".format(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features7.addLayout(layout)
+        for key,value in geometrical_features_to_show.items():
+            layout = QVBoxLayout()        
+            label = QLabel('<h4>'+str(key)+':</h4>')
+            label.setStyleSheet("color: rgb(59,59,59)")
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label.setMaximumWidth(122)        
+            layout.addWidget(label)
+            label1 = QLabel(str(value))
+            label1.setStyleSheet("padding: 5px; border: 1px solid #cccccc; border-radius: 5px; background-color:#cccccc;")
+            label1.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            label1.setMaximumWidth(122)        
+            layout.addWidget(label1)
+            self.ui.verticalLayout_features8.addLayout(layout)
+        
+        from hrvanalysis import plot_psd
+        #plot_psd(intervalosNN, method="welch")
    
+
+
 
 class Dialog(QDialog):
     def __init__(self, *args, **kwargs):
@@ -200,14 +346,15 @@ class Dialog(QDialog):
         for key,value in self.record.__dict__.items():
             layout = QHBoxLayout()
             label = QLabel('<b>'+str(key)+'</b>')
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
             label.setMaximumWidth(200)
             layout.addWidget(label)
-            layout.addWidget(QLabel(str(value)))
+            label = QLabel(str(value))
+            label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+            layout.addWidget(label)
             dialog.uiMetadataModal.verticalitemsmetadata.addLayout(layout)
            
     
-
-
 
     def closeModal(self):
         self.close()

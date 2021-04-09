@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1366</width>
-    <height>700</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>favicon.svg</normaloff>favicon.svg</iconset>
+    <normaloff>../../../../../../.designer/backup/favicon.svg</normaloff>../../../../../../.designer/backup/favicon.svg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(0, 72, 100)</string>
@@ -104,8 +104,20 @@
              <height>80</height>
             </size>
            </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
            <property name="pixmap">
             <pixmap>logo.svg</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -685,31 +697,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widgetSmall" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>150</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 83, 114);</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QWidget" name="widgetToolbarSmall" native="true">
           <property name="minimumSize">
            <size>
@@ -765,7 +752,7 @@
            <x>0</x>
            <y>0</y>
            <width>340</width>
-           <height>576</height>
+           <height>566</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -776,11 +763,64 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>341</width>
-            <height>581</height>
+            <width>321</width>
+            <height>571</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="LayoutItemsMetadata"/>
+          <layout class="QVBoxLayout" name="LayoutItemsMetadata">
+           <item>
+            <widget class="QScrollArea" name="scrollAreaFeatures">
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(0, 83, 114);</string>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>317</width>
+                <height>567</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="0" column="0" colspan="2">
+                <layout class="QVBoxLayout" name="verticalLayout_features"/>
+               </item>
+               <item row="1" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout_features1"/>
+               </item>
+               <item row="1" column="1">
+                <layout class="QVBoxLayout" name="verticalLayout_features2"/>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <layout class="QVBoxLayout" name="verticalLayout_features3"/>
+               </item>
+               <item row="3" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout_features4"/>
+               </item>
+               <item row="3" column="1">
+                <layout class="QVBoxLayout" name="verticalLayout_features5"/>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <layout class="QVBoxLayout" name="verticalLayout_features6"/>
+               </item>
+               <item row="5" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout_features7"/>
+               </item>
+               <item row="5" column="1">
+                <layout class="QVBoxLayout" name="verticalLayout_features8"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </widget>
